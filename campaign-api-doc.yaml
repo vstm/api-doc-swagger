@@ -581,7 +581,7 @@ paths:
                       application/json:
                           schema:
                               $ref: '#/components/schemas/FlightCommission'
-              
+
               '404':
                   description: Flight has not been found
       post:
@@ -609,6 +609,48 @@ paths:
                       * `407eebae-cb0c-49fd-9708-4312452133ee` - Cannot change commission because flight is already invoiced
               '500':
                   $ref: '#/components/responses/InternalServerErrorDefault'
+  /app-api/price/tarif/{tarifId}:
+    get:
+      tags: [ Price ]
+      summary: List prices for a tarif
+      description: >
+        Returns the price rows for a given `tarifId` with pagination.
+      parameters:
+        - in: path
+          name: tarifId
+          description: The ID of the tarif.
+          required: true
+          schema:
+            type: integer
+          example: 1
+        - in: query
+          name: page
+          description: From 1 to the last page number found in the pagination part of the response.
+          required: false
+          schema:
+            type: integer
+            default: 1
+#        - in: query
+#          name: responseType
+#          description: >
+#            Optional response type. Use `csv` to retrieve CSV export instead of JSON.
+#          required: false
+#          schema:
+#            type: string
+#            enum: [ json, csv ]
+#            default: json
+      responses:
+        '200':
+          description: Returns pagination and items with price information (JSON responseType).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TarifPriceList'
+        '404':
+          description: Tarif has not been found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorDefault'
+
 
 components:
   schemas:
@@ -893,30 +935,112 @@ components:
               nullable: false
               example: 33.33
 
+    TarifPriceList:
+      description: A paginated list of prices for a tarif
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TarifPriceItem'
+
+    Pagination:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          example: 300
+        perPage:
+          type: integer
+          example: 100
+        currentPage:
+          type: integer
+          example: 1
+        lastPage:
+          type: integer
+          example: 3
+        nextPageUrl:
+          type: string
+          nullable: true
+          example: 'https://yourinstance.gotom.io/app-api/example/1?page=2'
+
+    TarifPriceItem:
+      type: object
+      properties:
+        id:
+          description: Compound price identifier
+          type: string
+          example: 'T-1|CO-1|P-6|CH-18|M-4|A-13|TG-1|PT-1|E-'
+        tarifId:
+          type: integer
+          example: 1
+        tarif:
+          type: string
+          example: 'DO NOT TOUCH (please copy)'
+        companyId:
+          type: integer
+          example: 1
+        company:
+          type: string
+          example: 'Mandant 1 (Hauswährung, Plattform de+en, Netzwerk 1, CH)'
+        platformId:
+          type: integer
+          example: 6
+        platform:
+          type: string
+          example: 'Netzwerk 1 (fixer Schlüssel)'
+        channelId:
+          type: integer
+          example: 18
+        channel:
+          type: string
+          example: 'GAMX (Nativ)'
+        mediaId:
+          type: integer
+          example: 4
+        media:
+          type: string
+          example: 'Nativ'
+        advertisingId:
+          type: integer
+          example: 13
+        advertising:
+          type: string
+          example: 'WM eigenständig 1 (Nativ)'
+        advertisingSizeName:
+          type: string
+          nullable: true
+        tarifGroupId:
+          type: integer
+          example: 1
+        tarifGroup:
+          type: string
+          example: 'Tarifgruppe'
+        priceTypeId:
+          type: integer
+          example: 1
+        priceType:
+          type: string
+          example: '1000 Impressions'
+        extraPriceLevelId:
+          type: integer
+          nullable: true
+        extraPriceLevel:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: float
+          example: 25
+
     PrimaryKeysRead:
       description: A primary key, item name list
       type: object
       properties:
         pagination:
-          type: object
-          properties:
-            totalItems:
-              type: integer
-              example: 33
-            perPage:
-              type: integer
-              example: 1000
-            currentPage:
-              type: integer
-              example: 1
-            lastPage:
-              type: integer
-              example: 1
-            nextPageUrl:
-              description: if there are too many items retrieved to fit in one response, you can retrieve the remaining by using the next URL to access the next page
-              example: https://demo.gotom.io/app-api/primary-keys/tarifId?page=2
-              type: string
-              nullable: true
+          $ref: '#/components/schemas/Pagination'
         items:
           type: array
           items:
