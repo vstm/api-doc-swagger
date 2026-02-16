@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 4.4.9
+  version: 4.4.10
   title: Campaign API
 
 x-explorer-enabled: false # this disables the "try me" button for test requests on readme.com
@@ -609,9 +609,9 @@ paths:
                       * `407eebae-cb0c-49fd-9708-4312452133ee` - Cannot change commission because flight is already invoiced
               '500':
                   $ref: '#/components/responses/InternalServerErrorDefault'
-  /app-api/price/tarif/{tarifId}:
+  /app-api/export/price/tarif/{tarifId}:
     get:
-      tags: [ Price ]
+      tags: [ Export ]
       summary: List prices for a tarif
       description: >
         Returns the price rows for a given `tarifId` with pagination.
@@ -641,7 +641,7 @@ paths:
 #            default: json
       responses:
         '200':
-          description: Returns pagination and items with price information (JSON responseType).
+          description: Returns pagination and items with price information.
           content:
             application/json:
               schema:
@@ -938,6 +938,7 @@ components:
     TarifPriceList:
       description: A paginated list of prices for a tarif
       type: object
+      required: [pagination, items]
       properties:
         pagination:
           $ref: '#/components/schemas/Pagination'
@@ -948,6 +949,12 @@ components:
 
     Pagination:
       type: object
+      required:
+        - totalItems
+        - perPage
+        - currentPage
+        - lastPage
+        - nextPageUrl
       properties:
         totalItems:
           type: integer
@@ -968,29 +975,30 @@ components:
 
     TarifPriceItem:
       type: object
+      required: [tarifId, tarif, companyId, company, platformId, platform, channelId, channel, mediaId, media, advertisingId, advertising, tarifGroupId, tarifGroup, priceTypeId, priceType, extraPriceLevelId, extraPriceLevel, price]
       properties:
-        id:
-          description: Compound price identifier
-          type: string
-          example: 'T-1|CO-1|P-6|CH-18|M-4|A-13|TG-1|PT-1|E-'
         tarifId:
           type: integer
           example: 1
         tarif:
           type: string
-          example: 'DO NOT TOUCH (please copy)'
+          example: 'Rate 2027'
         companyId:
           type: integer
           example: 1
+          nullable: true
         company:
           type: string
           example: 'Mandant 1 (Hauswährung, Plattform de+en, Netzwerk 1, CH)'
+          nullable: true
         platformId:
           type: integer
           example: 6
+          nullable: true
         platform:
           type: string
           example: 'Netzwerk 1 (fixer Schlüssel)'
+          nullable: true
         channelId:
           type: integer
           example: 18
@@ -1009,21 +1017,22 @@ components:
         advertising:
           type: string
           example: 'WM eigenständig 1 (Nativ)'
-        advertisingSizeName:
-          type: string
-          nullable: true
         tarifGroupId:
           type: integer
           example: 1
+          nullable: true
         tarifGroup:
           type: string
           example: 'Tarifgruppe'
+          nullable: true
         priceTypeId:
           type: integer
           example: 1
+          nullable: true
         priceType:
           type: string
           example: '1000 Impressions'
+          nullable: true
         extraPriceLevelId:
           type: integer
           nullable: true
@@ -1034,6 +1043,7 @@ components:
           type: number
           format: float
           example: 25
+          nullable: true
 
     PrimaryKeysRead:
       description: A primary key, item name list
