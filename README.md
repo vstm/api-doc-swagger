@@ -5,7 +5,7 @@
 the OpenAPI specification is split up into 3 files
 
 - [campaign-api-doc.yaml](campaign-api-doc.yaml)
-- [customer-api-doc.yaml](crm-sync-api-doc.yaml)
+- [crm-sync-api-doc.yaml](crm-sync-api-doc.yaml)
 - [graph-report-api-doc.yaml](graph-report-api-doc.yaml)
 
 1. Update the one you are manipulating using swagger editor e.g. https://editor.swagger.io/ this helps you avoid syntax errors
