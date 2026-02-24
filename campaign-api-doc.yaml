@@ -943,6 +943,7 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
         items:
+          description: The found prices
           type: array
           items:
             $ref: '#/components/schemas/TarifPriceItem'

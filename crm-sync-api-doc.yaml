@@ -6,6 +6,22 @@ info:
 x-explorer-enabled: false # this disables the "try me" button for test requests on readme.com
 
 paths:
+  /app-api/customer:
+    get:
+      tags: [ Customer ]
+      summary: Retrieve all customers paginated
+      description:
+        Retrieves all customer data objects including it's default discounts. For writing a customer you should look inside the GoTom CRM Sync API.
+      responses:
+        '200':
+          description: Customer has been retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerList'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorDefault'
+
   /app-api/customer/{customerCrmExternalId}:
     parameters:
       - $ref: '#/components/parameters/ParamCustomerExternalCrmId'
@@ -479,6 +495,45 @@ components:
       required:
         - ok
         - customer
+
+    CustomerList:
+      description: A paginated list of customers
+      type: object
+      required: [pagination, items]
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        items:
+          description: The found customers
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerRead'
+
+    Pagination:
+      type: object
+      required:
+        - totalItems
+        - perPage
+        - currentPage
+        - lastPage
+        - nextPageUrl
+      properties:
+        totalItems:
+          type: integer
+          example: 300
+        perPage:
+          type: integer
+          example: 100
+        currentPage:
+          type: integer
+          example: 1
+        lastPage:
+          type: integer
+          example: 3
+        nextPageUrl:
+          type: string
+          nullable: true
+          example: 'https://yourinstance.gotom.io/app-api/example/1?page=2'
 
     NoCustomerFoundResponse:
       properties:
