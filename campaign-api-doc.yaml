@@ -32,6 +32,7 @@ paths:
               - media
               - advertising
               - flightPositionType
+              - flightTags
           required: true
         - in: query
           name: page
@@ -1297,7 +1298,7 @@ components:
 
         flightTags:
           description: Tags of the flight. Corresponds with the "Flight Tags" Field in the UI of the "Umsatzarten" / "Revenue Types" campaign view
-            When creating/updating only the array with ID's are expected, send null or an empty array to clear the tags on update.
+            When creating/updating only the array with IDs are expected, send null or an empty array to clear the tags on update.
           type: array
           items:
             type: integer
@@ -1323,6 +1324,8 @@ components:
               type: string
 
     FlightRead:
+      required:
+        - flightTags
       allOf:
         - $ref: "#/components/schemas/FlightCreate"
       properties:
